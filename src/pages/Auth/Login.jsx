@@ -14,7 +14,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import Auth from '../../util/Auth';
 import Validations from '../../util/Validations';
-import './Auth.css';
 
 async function loginRequest(data) {
     const response = await fetch('http://localhost/dissector-generator-api/api/routes/auth/login.php', {

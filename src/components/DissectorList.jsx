@@ -48,34 +48,39 @@ export default function BasicTable() {
     );
 
     return (
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Created By</TableCell>
-                        <TableCell>Created At</TableCell>
-                        <TableCell>Options</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {data.dissectors && data.dissectors.map((dissector) => (
-                        <TableRow
-                            key={dissector.id}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                            <TableCell component="th" scope="row">
-                                {dissector.name}
-                            </TableCell>
-                            <TableCell>{dissector.userName}</TableCell>
-                            <TableCell>{new Date(dissector.createdAt).toLocaleDateString()}</TableCell>
-                            <TableCell>
-                                <DissectorMenu userId={dissector.userId} />
-                            </TableCell>
+        data.dissectors ? (
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Created By</TableCell>
+                            <TableCell>Created At</TableCell>
+                            <TableCell>Options</TableCell>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                        {data.dissectors.map((dissector) => (
+                            <TableRow
+                                key={dissector.id}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell component="th" scope="row">
+                                    {dissector.name}
+                                </TableCell>
+                                <TableCell>{dissector.userName}</TableCell>
+                                <TableCell>{new Date(dissector.createdAt).toLocaleDateString()}</TableCell>
+                                <TableCell>
+                                    <DissectorMenu userId={dissector.userId} />
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        ) : (
+            <div>
+            </div>
+        )
     );
 }

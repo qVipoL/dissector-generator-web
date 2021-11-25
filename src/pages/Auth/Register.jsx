@@ -13,8 +13,6 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Validations from '../../util/Validations';
 
-import './Auth.css';
-
 async function registerRequest(data) {
     const response = await fetch('http://localhost/dissector-generator-api/api/routes/auth/register.php', {
         method: 'POST',
