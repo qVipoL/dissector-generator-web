@@ -228,6 +228,8 @@ export default function DissectorForm(props) {
         if (!response.success) {
             Auth.logout();
             navigate('/dissector-generator-web/login');
+        } else {
+            navigate('/dissector-generator-web');
         }
     }
 
