@@ -14,6 +14,10 @@ import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import Tooltip from '@mui/material/Tooltip';
+
+import Converter from '../util/Converter';
 import StructMenu from './StructMenu';
 
 const theme = createTheme();
@@ -82,6 +86,24 @@ export default function DissectorForm(props) {
         setValues({ ...values, [prop]: event.target.value });
     };
 
+    const handleStructChange = (prop, structIdx, fieldIdx = null, caseIdx = null) => (event) => {
+        const structs = [
+            ...values.structs
+        ];
+
+        if (fieldIdx === null && caseIdx === null)
+            structs[structIdx][prop] = event.target.value;
+        else if (fieldIdx !== null && caseIdx === null)
+            structs[structIdx].fields[fieldIdx][prop] = event.target.value;
+        else
+            structs[structIdx].fields[fieldIdx].cases[caseIdx][prop] = event.target.value;
+
+        setValues({
+            ...values,
+            structs
+        })
+    };
+
     const addStruct = () => {
         setValues({
             ...values,
@@ -121,8 +143,6 @@ export default function DissectorForm(props) {
             ...values,
             structs
         });
-
-        console.log(values)
     }
 
     const removeField = (structIdx, fieldIdx) => {
@@ -168,10 +188,15 @@ export default function DissectorForm(props) {
         });
     }
 
+    const isDisabled = values.structs.length < 1
+        || !!values.structs.find((struct) => struct.fields?.length < 1
+            || !!struct.fields.find((field => field.type === 'condition' && field.cases.length < 1)))
+
     const handleSubmit = (event) => {
         event.preventDefault();
-
-        console.log(values);
+        const converter = new Converter(values);
+        // console.log(values);
+        console.log(converter.createDissector());
     };
 
     return (
@@ -189,7 +214,7 @@ export default function DissectorForm(props) {
                     <Typography component="h1" variant="h5">
                         Create Dissector
                     </Typography>
-                    <Box component="form" noValidate sx={{ mt: 3 }}>
+                    <Box component="form" sx={{ mt: 3 }} onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={8}>
                                 <TextField
@@ -198,6 +223,7 @@ export default function DissectorForm(props) {
                                     fullWidth
                                     id="dissectorName"
                                     label="Dissector Name"
+                                    onChange={handleChange('dissectorName')}
                                     autoFocus
                                 />
                             </Grid>
@@ -226,6 +252,7 @@ export default function DissectorForm(props) {
                                     id="description"
                                     label="Dissector Description"
                                     name="description"
+                                    onChange={handleChange('description')}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={8}>
@@ -235,6 +262,7 @@ export default function DissectorForm(props) {
                                     name="connectionType"
                                     label="Connection Type"
                                     id="connectionType"
+                                    onChange={handleChange('connectionType')}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4}>
@@ -245,6 +273,7 @@ export default function DissectorForm(props) {
                                     label="Port"
                                     id="port"
                                     type="number"
+                                    onChange={handleChange('port')}
                                 />
                             </Grid>
 
@@ -256,9 +285,10 @@ export default function DissectorForm(props) {
                                                 <TextField
                                                     required
                                                     fullWidth
-                                                    name={`struct${idx}Name`}
+                                                    name="structName"
                                                     label="Struct Name"
-                                                    id={`struct${idx}Name`}
+                                                    id="structName"
+                                                    onChange={handleStructChange('structName', idx)}
                                                 />
                                             </Grid>
                                             <Grid item xs={12} sm={1}>
@@ -269,14 +299,16 @@ export default function DissectorForm(props) {
                                                 />
                                             </Grid>
                                             <Grid item xs={12} sm={1}>
-                                                <IconButton
-                                                    size="large"
-                                                    aria-controls="menu-appbar"
-                                                    aria-haspopup="true"
-                                                    onClick={() => removeStruct(idx)}
-                                                    color="inherit">
-                                                    <DeleteOutlineIcon />
-                                                </IconButton>
+                                                <Tooltip title="Delete Struct">
+                                                    <IconButton
+                                                        size="large"
+                                                        aria-controls="menu-appbar"
+                                                        aria-haspopup="true"
+                                                        onClick={() => removeStruct(idx)}
+                                                        color="inherit">
+                                                        <DeleteOutlineIcon />
+                                                    </IconButton>
+                                                </Tooltip>
                                             </Grid>
 
                                             {
@@ -293,6 +325,7 @@ export default function DissectorForm(props) {
                                                                                 name="fieldType"
                                                                                 label="Field Type"
                                                                                 id="fieldType"
+                                                                                onChange={handleStructChange('fieldType', idx, fieldIdx)}
                                                                             />
                                                                         </Grid>
                                                                         <Grid item xs={12} sm={6}>
@@ -302,17 +335,20 @@ export default function DissectorForm(props) {
                                                                                 name="fieldName"
                                                                                 label="Field Name"
                                                                                 id="fieldName"
+                                                                                onChange={handleStructChange('fieldName', idx, fieldIdx)}
                                                                             />
                                                                         </Grid>
                                                                         <Grid item xs={12} sm={1}>
-                                                                            <IconButton
-                                                                                size="large"
-                                                                                aria-controls="menu-appbar"
-                                                                                aria-haspopup="true"
-                                                                                onClick={() => removeField(idx, fieldIdx)}
-                                                                                color="inherit">
-                                                                                <DeleteOutlineIcon />
-                                                                            </IconButton>
+                                                                            <Tooltip title="Delete field">
+                                                                                <IconButton
+                                                                                    size="large"
+                                                                                    aria-controls="menu-appbar"
+                                                                                    aria-haspopup="true"
+                                                                                    onClick={() => removeField(idx, fieldIdx)}
+                                                                                    color="inherit">
+                                                                                    <DeleteOutlineIcon />
+                                                                                </IconButton>
+                                                                            </Tooltip>
                                                                         </Grid>
                                                                     </>
                                                                     : field.type === 'bitField' ?
@@ -324,6 +360,7 @@ export default function DissectorForm(props) {
                                                                                     name="fieldType"
                                                                                     label="Field Type"
                                                                                     id="fieldType"
+                                                                                    onChange={handleStructChange('fieldType', idx, fieldIdx)}
                                                                                 />
                                                                             </Grid>
                                                                             <Grid item xs={12} sm={4}>
@@ -333,26 +370,30 @@ export default function DissectorForm(props) {
                                                                                     name="fieldName"
                                                                                     label="Field Name"
                                                                                     id="fieldName"
+                                                                                    onChange={handleStructChange('fieldName', idx, fieldIdx)}
                                                                                 />
                                                                             </Grid>
                                                                             <Grid item xs={12} sm={4}>
                                                                                 <TextField
                                                                                     required
                                                                                     fullWidth
-                                                                                    name="fieldMask"
-                                                                                    label="Field Mask"
-                                                                                    id="fieldMask"
+                                                                                    name="bitMask"
+                                                                                    label="Bit Mask"
+                                                                                    id="bitMask"
+                                                                                    onChange={handleStructChange('bitMask', idx, fieldIdx)}
                                                                                 />
                                                                             </Grid>
                                                                             <Grid item xs={12} sm={1}>
-                                                                                <IconButton
-                                                                                    size="large"
-                                                                                    aria-controls="menu-appbar"
-                                                                                    aria-haspopup="true"
-                                                                                    onClick={() => removeField(idx, fieldIdx)}
-                                                                                    color="inherit">
-                                                                                    <DeleteOutlineIcon />
-                                                                                </IconButton>
+                                                                                <Tooltip title="Delete bit field">
+                                                                                    <IconButton
+                                                                                        size="large"
+                                                                                        aria-controls="menu-appbar"
+                                                                                        aria-haspopup="true"
+                                                                                        onClick={() => removeField(idx, fieldIdx)}
+                                                                                        color="inherit">
+                                                                                        <DeleteOutlineIcon />
+                                                                                    </IconButton>
+                                                                                </Tooltip>
                                                                             </Grid>
                                                                         </>
                                                                         : field.type === 'condition' &&
@@ -364,27 +405,32 @@ export default function DissectorForm(props) {
                                                                                     name="conditionField"
                                                                                     label="Condition Field"
                                                                                     id="conditionField"
+                                                                                    onChange={handleStructChange('conditionField', idx, fieldIdx)}
                                                                                 />
                                                                             </Grid>
                                                                             <Grid item xs={12} sm={1}>
-                                                                                <IconButton
-                                                                                    size="large"
-                                                                                    aria-controls="menu-appbar"
-                                                                                    aria-haspopup="true"
-                                                                                    onClick={() => addCase(idx, fieldIdx)}
-                                                                                    color="inherit">
-                                                                                    <AddIcon />
-                                                                                </IconButton>
+                                                                                <Tooltip title="Add case">
+                                                                                    <IconButton
+                                                                                        size="large"
+                                                                                        aria-controls="menu-appbar"
+                                                                                        aria-haspopup="true"
+                                                                                        onClick={() => addCase(idx, fieldIdx)}
+                                                                                        color="inherit">
+                                                                                        <AddIcon />
+                                                                                    </IconButton>
+                                                                                </Tooltip>
                                                                             </Grid>
                                                                             <Grid item xs={12} sm={1}>
-                                                                                <IconButton
-                                                                                    size="large"
-                                                                                    aria-controls="menu-appbar"
-                                                                                    aria-haspopup="true"
-                                                                                    onClick={() => removeField(idx, fieldIdx)}
-                                                                                    color="inherit">
-                                                                                    <DeleteOutlineIcon />
-                                                                                </IconButton>
+                                                                                <Tooltip title="Delete condition">
+                                                                                    <IconButton
+                                                                                        size="large"
+                                                                                        aria-controls="menu-appbar"
+                                                                                        aria-haspopup="true"
+                                                                                        onClick={() => removeField(idx, fieldIdx)}
+                                                                                        color="inherit">
+                                                                                        <DeleteOutlineIcon />
+                                                                                    </IconButton>
+                                                                                </Tooltip>
                                                                             </Grid>
 
                                                                             {
@@ -398,6 +444,7 @@ export default function DissectorForm(props) {
                                                                                                     name="case"
                                                                                                     label="Case"
                                                                                                     id="case"
+                                                                                                    onChange={handleStructChange('case', idx, fieldIdx, caseIdx)}
                                                                                                 />
                                                                                             </Grid>
                                                                                             <Grid item xs={12} sm={4}>
@@ -407,6 +454,7 @@ export default function DissectorForm(props) {
                                                                                                     name="fieldType"
                                                                                                     label="Field Type"
                                                                                                     id="fieldType"
+                                                                                                    onChange={handleStructChange('fieldType', idx, fieldIdx, caseIdx)}
                                                                                                 />
                                                                                             </Grid>
                                                                                             <Grid item xs={12} sm={4}>
@@ -416,17 +464,20 @@ export default function DissectorForm(props) {
                                                                                                     name="fieldName"
                                                                                                     label="Field Name"
                                                                                                     id="fieldName"
+                                                                                                    onChange={handleStructChange('fieldName', idx, fieldIdx, caseIdx)}
                                                                                                 />
                                                                                             </Grid>
                                                                                             <Grid item xs={12} sm={1}>
-                                                                                                <IconButton
-                                                                                                    size="large"
-                                                                                                    aria-controls="menu-appbar"
-                                                                                                    aria-haspopup="true"
-                                                                                                    onClick={() => removeCase(idx, fieldIdx, caseIdx)}
-                                                                                                    color="inherit">
-                                                                                                    <DeleteOutlineIcon />
-                                                                                                </IconButton>
+                                                                                                <Tooltip title="Delete case">
+                                                                                                    <IconButton
+                                                                                                        size="large"
+                                                                                                        aria-controls="menu-appbar"
+                                                                                                        aria-haspopup="true"
+                                                                                                        onClick={() => removeCase(idx, fieldIdx, caseIdx)}
+                                                                                                        color="inherit">
+                                                                                                        <DeleteOutlineIcon />
+                                                                                                    </IconButton>
+                                                                                                </Tooltip>
                                                                                             </Grid>
                                                                                         </Fragment>
                                                                                     )
@@ -446,21 +497,38 @@ export default function DissectorForm(props) {
                             }
 
                             <Grid item xs={12} sm={1}>
-                                <IconButton
-                                    size="large"
-                                    aria-controls="menu-appbar"
-                                    aria-haspopup="true"
-                                    onClick={addStruct}
-                                    color="inherit">
-                                    <AddIcon />
-                                </IconButton>
+                                <Tooltip title="Add struct">
+                                    <IconButton
+                                        size="large"
+                                        aria-controls="menu-appbar"
+                                        aria-haspopup="true"
+                                        onClick={addStruct}
+                                        color="inherit">
+                                        <AddIcon />
+                                    </IconButton>
+                                </Tooltip>
                             </Grid>
+                            {
+                                isDisabled && (
+                                    <Grid item xs={12} sm={1}>
+                                        <Tooltip title="You must create at least one struct with fields and conditional fields must have at least one field...">
+                                            <IconButton
+                                                size="large"
+                                                aria-haspopup="true"
+                                                color="inherit">
+                                                <QuestionMarkIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
+                                )
+                            }
                         </Grid>
 
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
+                            disabled={isDisabled}
                             sx={{ mt: 3, mb: 2 }}
                         >
                             Privew Code
