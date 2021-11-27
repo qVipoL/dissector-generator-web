@@ -7,9 +7,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import DissectorMenu from './DissectorMenu';
 import Auth from '../util/Auth';
+
+const theme = createTheme();
 
 export default function BasicTable() {
     const [data, setData] = useState({
@@ -49,35 +52,37 @@ export default function BasicTable() {
 
     return (
         data.dissectors ? (
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Created By</TableCell>
-                            <TableCell>Created At</TableCell>
-                            <TableCell>Options</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {data.dissectors.map((dissector) => (
-                            <TableRow
-                                key={dissector.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row">
-                                    {dissector.name}
-                                </TableCell>
-                                <TableCell>{dissector.userName}</TableCell>
-                                <TableCell>{new Date(dissector.createdAt).toLocaleDateString()}</TableCell>
-                                <TableCell>
-                                    <DissectorMenu userId={dissector.userId} />
-                                </TableCell>
+            <ThemeProvider theme={theme}>
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Created By</TableCell>
+                                <TableCell>Created At</TableCell>
+                                <TableCell>Options</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                            {data.dissectors.map((dissector) => (
+                                <TableRow
+                                    key={dissector.id}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        {dissector.name}
+                                    </TableCell>
+                                    <TableCell>{dissector.userName}</TableCell>
+                                    <TableCell>{new Date(dissector.createdAt).toLocaleDateString()}</TableCell>
+                                    <TableCell>
+                                        <DissectorMenu userId={dissector.userId} />
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </ThemeProvider>
         ) : (
             <div>
             </div>
