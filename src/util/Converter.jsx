@@ -25,7 +25,8 @@ dissectorTable["${this.data.connectionType}", "${this.data.port}"] = ${this.data
     createStruct(struct) {
         return `struct ${struct.structName} {
     ${this.createFields(struct.fields)}
-};`;
+};
+`;
     }
 
     createFields(fields) {

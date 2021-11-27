@@ -16,59 +16,47 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import Tooltip from '@mui/material/Tooltip';
-
+import { useNavigate } from 'react-router-dom';
 import Converter from '../util/Converter';
 import StructMenu from './StructMenu';
+import DissectorModal from './DissectorModal';
+import Auth from '../util/Auth';
 
 const theme = createTheme();
 
-const propTypes = {
-    formType: 'CREATE',
-    endianType: 'big',
-    dissectorName: 'test',
-    description: 'test',
-    connectionType: 'tcp.port',
-    port: '1337',
-    structs: [
-        {
-            structName: 'struct2',
-            fields: []
+async function requestConversion(data) {
+    const response = await fetch('http://localhost/dissector-generator-api/api/routes/dissectors/convert.php', {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json'
         },
-        {
-            structName: 'dissector',
-            fields: [
-                {
-                    type: 'field',
-                    fieldType: 'int',
-                    fieldName: 'test'
-                },
-                {
-                    type: 'bit-field',
-                    fieldType: 'int',
-                    fieldName: 'bit',
-                    bitMask: '0x007'
-                },
-                {
-                    type: 'condition',
-                    conditionField: 'test',
-                    cases: [
-                        {
-                            case: '1',
-                            fieldType: 'int',
-                            fieldName: 'case1'
-                        },
-                        {
-                            case: 'default',
-                            fieldType: 'int',
-                            fieldName: 'default11'
-                        }
-                    ]
-                }
-            ]
-        }
-    ],
-    mainStruct: 'dissector'
-};
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify(data)
+    });
+
+    return await response.json();
+}
+
+async function requestCreate(data) {
+    const response = await fetch('http://localhost/dissector-generator-api/api/routes/dissectors/create.php', {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify(data)
+    });
+
+    return await response.json();
+}
 
 export default function DissectorForm(props) {
     const [values, setValues] = useState({
@@ -79,8 +67,17 @@ export default function DissectorForm(props) {
         connectionType: props.data?.connectionType || '',
         port: props.data?.port || '',
         structs: props.data?.structs || [],
-        mainStruct: props.data?.mainStruct || ''
+        mainStruct: props.data?.mainStruct || '',
+        luaCode: props.data?.luaCode || ''
     });
+
+    const [isOpen, setOpen] = useState(false);
+
+    const navigate = useNavigate();
+
+    const handleClose = () => {
+        setOpen(false);
+    }
 
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
@@ -192,15 +189,56 @@ export default function DissectorForm(props) {
         || !!values.structs.find((struct) => struct.fields?.length < 1
             || !!struct.fields.find((field => field.type === 'condition' && field.cases.length < 1)))
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+
         const converter = new Converter(values);
-        // console.log(values);
-        console.log(converter.createDissector());
+
+        const response = await requestConversion({
+            code: converter.createDissector()
+        });
+
+        if (!response.success) {
+            Auth.logout();
+            navigate('/dissector-generator-web/login');
+        } else {
+            setValues({ ...values, luaCode: response.luaCode });
+            setOpen(true);
+        }
     };
+
+    const createDissector = async (event) => {
+        event.preventDefault();
+
+        const dissector = {
+            ...values
+        }
+
+        delete dissector.formType
+
+        const response = await requestCreate({
+            name: values.dissectorName,
+            description: values.description,
+            code: values.luaCode,
+            fields: JSON.stringify(dissector)
+        });
+
+        setOpen(false);
+
+        if (!response.success) {
+            Auth.logout();
+            navigate('/dissector-generator-web/login');
+        }
+    }
 
     return (
         <ThemeProvider theme={theme} >
+            <DissectorModal
+                handleClose={handleClose}
+                open={isOpen}
+                luaCode={values.luaCode}
+                handleChange={handleChange}
+                createDissector={createDissector} />
             <Container component="main" maxWidth="md">
                 <CssBaseline />
                 <Box
