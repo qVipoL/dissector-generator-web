@@ -46,7 +46,6 @@ dissectorTable["${this.data.connectionType}", "${this.data.port}"] = ${this.data
     }
 
     createCondition(field) {
-        console.log(field)
         return `
     switch(${field.conditionField}) {
         ${field.cases.map((caseField) => `

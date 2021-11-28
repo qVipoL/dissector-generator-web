@@ -45,7 +45,7 @@ async function requestConversion(data) {
 }
 
 async function requestCreate(action, data) {
-    const actionUrl = `http://localhost/dissector-generator-api/api/routes/dissectors/${action}.php`;
+    const actionUrl = `http://localhost/dissector-generator-api/api/routes/dissectors/${action}`;
     const response = await fetch(actionUrl, {
         method: 'POST',
         mode: 'cors',
@@ -246,7 +246,7 @@ export default function DissectorForm(props) {
     const createDissector = async (event) => {
         event.preventDefault();
 
-        const action = values.formType === 'update' ? `${values.formType}.php?id=${values.id}` : values.formType;
+        const action = values.formType === 'update' ? `${values.formType}.php?id=${values.id}` : `${values.formType}.php`;
 
         const dissector = {
             ...values
@@ -257,8 +257,8 @@ export default function DissectorForm(props) {
         const response = await requestCreate(action, {
             name: values.dissectorName,
             description: values.description,
-            code: values.luaCode,
-            fields: dissector
+            fields: dissector,
+            code: values.luaCode
         });
 
         setOpen(false);
