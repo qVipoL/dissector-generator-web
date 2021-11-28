@@ -84,7 +84,7 @@ export default function BasicTable() {
     }
 
     return (
-        data.dissectors.length > 0 ? (
+        data.dissectors?.length > 0 ? (
             <ThemeProvider theme={theme}>
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">

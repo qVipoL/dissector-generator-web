@@ -206,13 +206,12 @@ export default function DissectorForm(props) {
                     ...struct,
                     structName: trimAndRemoveSpaces(struct.structName),
                     fields: struct.fields?.map((field) => {
-                        console.log(trimAndRemoveSpaces(field.fieldName))
                         return {
                             ...field,
                             fieldName: trimAndRemoveSpaces(field.fieldName),
                             ...(field.fieldType ? { fieldType: trimAndRemoveSpaces(field.fieldType) } : null),
                             ...(field.bitMask ? { bitMask: trimAndRemoveSpaces(field.bitMask) } : null),
-                            ...(field.cases ? {
+                            ...(field.cases && field.cases.length > 0 ? {
                                 cases: field.cases.map((caseField) => {
                                     return {
                                         ...caseField,
@@ -247,7 +246,7 @@ export default function DissectorForm(props) {
     const createDissector = async (event) => {
         event.preventDefault();
 
-        const action = values.formType === 'update' ? `${values.formType}?id=${values.id}` : values.formType;
+        const action = values.formType === 'update' ? `${values.formType}.php?id=${values.id}` : values.formType;
 
         const dissector = {
             ...values
