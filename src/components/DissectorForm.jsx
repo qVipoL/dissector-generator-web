@@ -21,6 +21,9 @@ import Converter from '../util/Converter';
 import StructMenu from './StructMenu';
 import DissectorModal from './DissectorModal';
 import Auth from '../util/Auth';
+import HelperFunctions from '../util/HelperFunctions';
+
+const { trimAndRemoveSpaces } = HelperFunctions;
 
 const theme = createTheme();
 
@@ -192,7 +195,39 @@ export default function DissectorForm(props) {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const converter = new Converter(values);
+        const formattedValues = {
+            ...values,
+            dissectorName: trimAndRemoveSpaces(values.dissectorName),
+            connectionType: trimAndRemoveSpaces(values.connectionType),
+            structs: values.structs.map((struct) => {
+                return {
+                    ...struct,
+                    structName: trimAndRemoveSpaces(struct.structName),
+                    fields: struct.fields?.map((field) => {
+                        console.log(trimAndRemoveSpaces(field.fieldName))
+                        return {
+                            ...field,
+                            fieldName: trimAndRemoveSpaces(field.fieldName),
+                            ...(field.fieldType ? { fieldType: trimAndRemoveSpaces(field.fieldType) } : null),
+                            ...(field.bitMask ? { bitMask: trimAndRemoveSpaces(field.bitMask) } : null),
+                            ...(field.cases ? {
+                                cases: field.cases.map((caseField) => {
+                                    return {
+                                        ...caseField,
+                                        fieldName: trimAndRemoveSpaces(caseField.fieldName),
+                                        fieldType: trimAndRemoveSpaces(caseField.fieldType)
+                                    };
+                                })
+                            } : null)
+                        };
+                    })
+                };
+            })
+        }
+
+        const converter = new Converter(formattedValues);
+        setValues({ ...formattedValues })
+        console.log(converter.createDissector());
 
         const response = await requestConversion({
             code: converter.createDissector()
@@ -420,6 +455,7 @@ export default function DissectorForm(props) {
                                                                                     name="bitMask"
                                                                                     label="Bit Mask"
                                                                                     id="bitMask"
+                                                                                    type="number"
                                                                                     onChange={handleStructChange('bitMask', idx, fieldIdx)}
                                                                                 />
                                                                             </Grid>
@@ -484,6 +520,7 @@ export default function DissectorForm(props) {
                                                                                                     name="case"
                                                                                                     label="Case"
                                                                                                     id="case"
+                                                                                                    type="number"
                                                                                                     onChange={handleStructChange('case', idx, fieldIdx, caseIdx)}
                                                                                                 />
                                                                                             </Grid>
