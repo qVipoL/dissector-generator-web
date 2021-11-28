@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import FileSaver from 'file-saver';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -11,6 +12,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import DissectorMenu from './DissectorMenu';
 import Auth from '../util/Auth';
+
+import emptyList from '../assets/empty-list.png';
 
 const theme = createTheme();
 
@@ -63,6 +66,11 @@ export default function BasicTable() {
         [data.reRender, navigate]
     );
 
+    const downloadDissector = (dissector) => {
+        var file = new File([dissector.code], `${dissector.name}.lua`, { type: "text/plain;charset=utf-8" });
+        FileSaver.saveAs(file);
+    };
+
     const deleteDissector = async (id) => {
         const res = await requestDelete(id);
 
@@ -76,7 +84,7 @@ export default function BasicTable() {
     }
 
     return (
-        data.dissectors ? (
+        data.dissectors.length < 0 ? (
             <ThemeProvider theme={theme}>
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -100,7 +108,11 @@ export default function BasicTable() {
                                     <TableCell>{dissector.userName}</TableCell>
                                     <TableCell>{new Date(dissector.createdAt).toLocaleDateString()}</TableCell>
                                     <TableCell>
-                                        <DissectorMenu userId={dissector.userId} dissectorId={dissector.id} deleteDissector={() => deleteDissector(dissector.id)} />
+                                        <DissectorMenu userId={dissector.userId}
+                                            dissectorId={dissector.id}
+                                            downloadDissector={() => downloadDissector(dissector)}
+                                            deleteDissector={() => deleteDissector(dissector.id)}
+                                        />
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -109,7 +121,8 @@ export default function BasicTable() {
                 </TableContainer>
             </ThemeProvider>
         ) : (
-            <div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <img alt="empty-list" src={emptyList} style={{ maxWidth: '50%', marginTop: 20 }} />
             </div>
         )
     );

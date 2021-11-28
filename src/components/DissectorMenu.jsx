@@ -57,12 +57,12 @@ export default function DissectorMenu(props) {
                     horizontal: 'left',
                 }}
             >
-                <MenuItem onClick={() => handleAction(`download/${props.dissectorId}`)}>Download</MenuItem>
+                <MenuItem onClick={props.downloadDissector}>Download</MenuItem>
 
                 {isMyDissector() && <MenuItem onClick={() => handleAction(`update/${props.dissectorId}`)}>Update</MenuItem>}
                 {isMyDissector() && <MenuItem onClick={props.deleteDissector}>Delete</MenuItem>}
 
             </Menu>
-        </div>
+        </div >
     );
 }
