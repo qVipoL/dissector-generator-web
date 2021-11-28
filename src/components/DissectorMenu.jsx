@@ -27,8 +27,7 @@ export default function DissectorMenu(props) {
         return id === props.userId;
     };
 
-    const handleAction = async (action) => (event) => {
-        event.preventDefault();
+    const handleAction = (action) => {
         navigate(`/dissector-generator-web/${action}`);
     };
 

@@ -33,7 +33,7 @@ export default function BasicTable() {
         reRender: false
     });
 
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(
         () => {
@@ -68,6 +68,8 @@ export default function BasicTable() {
 
         if (!res.success) {
             console.log(res.message);
+            Auth.logout();
+            navigate('/dissector-generator-web/login');
         } else {
             setData({ ...data, reRender: true });
         }
@@ -98,7 +100,7 @@ export default function BasicTable() {
                                     <TableCell>{dissector.userName}</TableCell>
                                     <TableCell>{new Date(dissector.createdAt).toLocaleDateString()}</TableCell>
                                     <TableCell>
-                                        <DissectorMenu userId={dissector.userId} deleteDissector={() => deleteDissector(dissector.id)} />
+                                        <DissectorMenu userId={dissector.userId} dissectorId={dissector.id} deleteDissector={() => deleteDissector(dissector.id)} />
                                     </TableCell>
                                 </TableRow>
                             ))}

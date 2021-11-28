@@ -4,7 +4,7 @@ import DissectorForm from '../../components/DissectorForm';
 export default function DissectorCreate() {
     return (
         <>
-            <DissectorForm formType="CREATE" />
+            <DissectorForm formType="create" />
         </>
     );
 }

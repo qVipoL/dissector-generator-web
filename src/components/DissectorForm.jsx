@@ -44,8 +44,9 @@ async function requestConversion(data) {
     return await response.json();
 }
 
-async function requestCreate(data) {
-    const response = await fetch('http://localhost/dissector-generator-api/api/routes/dissectors/create.php', {
+async function requestCreate(action, data) {
+    const actionUrl = `http://localhost/dissector-generator-api/api/routes/dissectors/${action}.php`;
+    const response = await fetch(actionUrl, {
         method: 'POST',
         mode: 'cors',
         cache: 'no-cache',
@@ -63,6 +64,7 @@ async function requestCreate(data) {
 
 export default function DissectorForm(props) {
     const [values, setValues] = useState({
+        id: props.data?.id || '',
         formType: props.formType,
         endianType: props.data?.endianType || 'big',
         dissectorName: props.data?.dissectorName || '',
@@ -245,17 +247,19 @@ export default function DissectorForm(props) {
     const createDissector = async (event) => {
         event.preventDefault();
 
+        const action = values.formType === 'update' ? `${values.formType}?id=${values.id}` : values.formType;
+
         const dissector = {
             ...values
-        }
+        };
 
-        delete dissector.formType
+        delete dissector.formType;
 
-        const response = await requestCreate({
+        const response = await requestCreate(action, {
             name: values.dissectorName,
             description: values.description,
             code: values.luaCode,
-            fields: JSON.stringify(dissector)
+            fields: dissector
         });
 
         setOpen(false);
@@ -287,7 +291,7 @@ export default function DissectorForm(props) {
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        Create Dissector
+                        {values.formType[0].toUpperCase() + values.formType.slice(1)} Dissector
                     </Typography>
                     <Box component="form" sx={{ mt: 3 }} onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
@@ -297,6 +301,7 @@ export default function DissectorForm(props) {
                                     required
                                     fullWidth
                                     id="dissectorName"
+                                    value={values.dissectorName}
                                     label="Dissector Name"
                                     onChange={handleChange('dissectorName')}
                                     autoFocus
@@ -325,6 +330,7 @@ export default function DissectorForm(props) {
                                     multiline
                                     rows={5}
                                     id="description"
+                                    value={values.description}
                                     label="Dissector Description"
                                     name="description"
                                     onChange={handleChange('description')}
@@ -337,6 +343,7 @@ export default function DissectorForm(props) {
                                     name="connectionType"
                                     label="Connection Type"
                                     id="connectionType"
+                                    value={values.connectionType}
                                     onChange={handleChange('connectionType')}
                                 />
                             </Grid>
@@ -346,6 +353,7 @@ export default function DissectorForm(props) {
                                     fullWidth
                                     name="port"
                                     label="Port"
+                                    value={values.port}
                                     id="port"
                                     type="number"
                                     onChange={handleChange('port')}
@@ -362,6 +370,7 @@ export default function DissectorForm(props) {
                                                     fullWidth
                                                     name="structName"
                                                     label="Struct Name"
+                                                    value={values.structs[idx].structName}
                                                     id="structName"
                                                     onChange={handleStructChange('structName', idx)}
                                                 />
@@ -399,6 +408,7 @@ export default function DissectorForm(props) {
                                                                                 fullWidth
                                                                                 name="fieldType"
                                                                                 label="Field Type"
+                                                                                value={values.structs[idx].fields[fieldIdx].fieldType}
                                                                                 id="fieldType"
                                                                                 onChange={handleStructChange('fieldType', idx, fieldIdx)}
                                                                             />
@@ -410,6 +420,7 @@ export default function DissectorForm(props) {
                                                                                 name="fieldName"
                                                                                 label="Field Name"
                                                                                 id="fieldName"
+                                                                                value={values.structs[idx].fields[fieldIdx].fieldName}
                                                                                 onChange={handleStructChange('fieldName', idx, fieldIdx)}
                                                                             />
                                                                         </Grid>
@@ -435,6 +446,7 @@ export default function DissectorForm(props) {
                                                                                     name="fieldType"
                                                                                     label="Field Type"
                                                                                     id="fieldType"
+                                                                                    value={values.structs[idx].fields[fieldIdx].fieldType}
                                                                                     onChange={handleStructChange('fieldType', idx, fieldIdx)}
                                                                                 />
                                                                             </Grid>
@@ -445,6 +457,7 @@ export default function DissectorForm(props) {
                                                                                     name="fieldName"
                                                                                     label="Field Name"
                                                                                     id="fieldName"
+                                                                                    value={values.structs[idx].fields[fieldIdx].fieldName}
                                                                                     onChange={handleStructChange('fieldName', idx, fieldIdx)}
                                                                                 />
                                                                             </Grid>
@@ -456,6 +469,7 @@ export default function DissectorForm(props) {
                                                                                     label="Bit Mask"
                                                                                     id="bitMask"
                                                                                     type="number"
+                                                                                    value={values.structs[idx].fields[fieldIdx].bitMask}
                                                                                     onChange={handleStructChange('bitMask', idx, fieldIdx)}
                                                                                 />
                                                                             </Grid>
@@ -481,6 +495,7 @@ export default function DissectorForm(props) {
                                                                                     name="conditionField"
                                                                                     label="Condition Field"
                                                                                     id="conditionField"
+                                                                                    value={values.structs[idx].fields[fieldIdx].conditionField}
                                                                                     onChange={handleStructChange('conditionField', idx, fieldIdx)}
                                                                                 />
                                                                             </Grid>
@@ -521,6 +536,7 @@ export default function DissectorForm(props) {
                                                                                                     label="Case"
                                                                                                     id="case"
                                                                                                     type="number"
+                                                                                                    value={values.structs[idx].fields[fieldIdx].cases[caseIdx].case}
                                                                                                     onChange={handleStructChange('case', idx, fieldIdx, caseIdx)}
                                                                                                 />
                                                                                             </Grid>
@@ -531,6 +547,7 @@ export default function DissectorForm(props) {
                                                                                                     name="fieldType"
                                                                                                     label="Field Type"
                                                                                                     id="fieldType"
+                                                                                                    value={values.structs[idx].fields[fieldIdx].cases[caseIdx].fieldType}
                                                                                                     onChange={handleStructChange('fieldType', idx, fieldIdx, caseIdx)}
                                                                                                 />
                                                                                             </Grid>
@@ -541,6 +558,7 @@ export default function DissectorForm(props) {
                                                                                                     name="fieldName"
                                                                                                     label="Field Name"
                                                                                                     id="fieldName"
+                                                                                                    value={values.structs[idx].fields[fieldIdx].cases[caseIdx].fieldName}
                                                                                                     onChange={handleStructChange('fieldName', idx, fieldIdx, caseIdx)}
                                                                                                 />
                                                                                             </Grid>
