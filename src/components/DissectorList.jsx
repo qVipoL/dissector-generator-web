@@ -14,6 +14,19 @@ import Auth from '../util/Auth';
 
 const theme = createTheme();
 
+async function requestDelete(id) {
+    const response = await fetch(`http://localhost/dissector-generator-api/api/routes/dissectors/delete.php?id=${id}`, {
+        method: 'DELETE',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer'
+    });
+
+    return await response.json();
+}
+
 export default function BasicTable() {
     const [data, setData] = useState({
         dissectors: [],
@@ -50,6 +63,16 @@ export default function BasicTable() {
         [data.reRender, navigate]
     );
 
+    const deleteDissector = async (id) => {
+        const res = await requestDelete(id);
+
+        if (!res.success) {
+            console.log(res.message);
+        } else {
+            setData({ ...data, reRender: true });
+        }
+    }
+
     return (
         data.dissectors ? (
             <ThemeProvider theme={theme}>
@@ -75,7 +98,7 @@ export default function BasicTable() {
                                     <TableCell>{dissector.userName}</TableCell>
                                     <TableCell>{new Date(dissector.createdAt).toLocaleDateString()}</TableCell>
                                     <TableCell>
-                                        <DissectorMenu userId={dissector.userId} />
+                                        <DissectorMenu userId={dissector.userId} deleteDissector={() => deleteDissector(dissector.id)} />
                                     </TableCell>
                                 </TableRow>
                             ))}

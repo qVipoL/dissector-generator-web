@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -9,6 +10,8 @@ import Auth from '../util/Auth';
 export default function DissectorMenu(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+
+    const navigate = useNavigate();
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -22,7 +25,12 @@ export default function DissectorMenu(props) {
         const id = Auth.getData().id;
 
         return id === props.userId;
-    }
+    };
+
+    const handleAction = async (action) => (event) => {
+        event.preventDefault();
+        navigate(`/dissector-generator-web/${action}`);
+    };
 
     return (
         <div>
@@ -50,10 +58,10 @@ export default function DissectorMenu(props) {
                     horizontal: 'left',
                 }}
             >
-                <MenuItem onClick={handleClose}>View</MenuItem>
+                <MenuItem onClick={() => handleAction(`download/${props.dissectorId}`)}>Download</MenuItem>
 
-                {isMyDissector() && <MenuItem onClick={handleClose}>Update</MenuItem>}
-                {isMyDissector() && <MenuItem onClick={handleClose}>Delete</MenuItem>}
+                {isMyDissector() && <MenuItem onClick={() => handleAction(`update/${props.dissectorId}`)}>Update</MenuItem>}
+                {isMyDissector() && <MenuItem onClick={props.deleteDissector}>Delete</MenuItem>}
 
             </Menu>
         </div>

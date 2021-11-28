@@ -11,8 +11,8 @@ export default function AuthNavigator() {
             <Routes>
                 <Route path={'/dissector-generator-web'} element={<DissectorHome />} />
                 <Route path={'/dissector-generator-web/create'} element={<DissectorCreate />} />
-                <Route path={'/dissector-generator-web/view'} element={<DissectorHome />} />
-                <Route path={'/dissector-generator-web/update'} element={<DissectorHome />} />
+                <Route path={'/dissector-generator-web/download/:id'} element={<DissectorCreate />} />
+                <Route path={'/dissector-generator-web/update/:id'} element={<DissectorHome />} />
                 <Route path={'*'} element={<Navigate to="/dissector-generator-web" />} />
             </Routes>
         </>
