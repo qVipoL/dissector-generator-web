@@ -23,7 +23,7 @@ Your app is ready to be deployed!
 
 - create a static directory on the server called 'dissector-generator-web' and move the files from the 'build' into it.
 
-- create a static directory on the server called 'dissector-generator-api' and move the [https://github.com/qVipoL/dissector-generator-backend]dissector-generator-backend into it.
+- create a static directory on the server called 'dissector-generator-api' and move the [https://github.com/qVipoL/dissector-generator-backend](dissector-generator-backend) into it.
 
 - intall phpmyadmin on the server
 
