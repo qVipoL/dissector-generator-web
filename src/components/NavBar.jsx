@@ -8,19 +8,9 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import AddIcon from '@mui/icons-material/Add';
 
 import Auth from '../util/Auth';
+import Requests from '../util/Requests';
 
-async function logoutRequest() {
-    const response = await fetch('http://localhost/dissector-generator-api/api/routes/auth/logout.php', {
-        method: 'PUT',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer'
-    });
-
-    return await response.json();
-}
+const { logoutRequest } = Requests;
 
 export default function MenuAppBar() {
     let navigate = useNavigate();

@@ -22,45 +22,12 @@ import StructMenu from './StructMenu';
 import DissectorModal from './DissectorModal';
 import Auth from '../util/Auth';
 import HelperFunctions from '../util/HelperFunctions';
+import Requests from '../util/Requests';
 
+const { requestConversion, requestCreate } = Requests;
 const { trimAndRemoveSpaces } = HelperFunctions;
 
 const theme = createTheme();
-
-async function requestConversion(data) {
-    const response = await fetch('http://localhost/dissector-generator-api/api/routes/dissectors/convert.php', {
-        method: 'POST',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer',
-        body: JSON.stringify(data)
-    });
-
-    return await response.json();
-}
-
-async function requestCreate(action, data) {
-    const actionUrl = `http://localhost/dissector-generator-api/api/routes/dissectors/${action}`;
-    const response = await fetch(actionUrl, {
-        method: 'POST',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer',
-        body: JSON.stringify(data)
-    });
-
-    return await response.json();
-}
 
 export default function DissectorForm(props) {
     const [values, setValues] = useState({

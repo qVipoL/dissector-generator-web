@@ -12,23 +12,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Validations from '../../util/Validations';
+import Requests from '../../util/Requests';
 
-async function registerRequest(data) {
-    const response = await fetch('http://localhost/dissector-generator-api/api/routes/auth/register.php', {
-        method: 'POST',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer',
-        body: JSON.stringify(data)
-    });
-
-    return await response.json();
-}
+const { registerRequest } = Requests;
 
 const theme = createTheme();
 

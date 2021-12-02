@@ -7,7 +7,11 @@ export default function RootNavigator() {
     const [isAuth, changeAuth] = useState(false);
 
     useEffect(() => {
-        Auth.setAuth(changeAuth);
+        async function setAuthenticated() {
+            await Auth.setAuth(changeAuth);
+        }
+
+        setAuthenticated();
     }, [isAuth])
 
     return (

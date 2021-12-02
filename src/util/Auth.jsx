@@ -1,3 +1,7 @@
+import Requests from '../util/Requests';
+
+const { loginRequest } = Requests;
+
 class Auth {
     constructor() {
         let res = localStorage.getItem('cookie');
@@ -7,8 +11,13 @@ class Auth {
         this.authenticated = !res ? false : true;
     }
 
-    setAuth(changeAuth) {
+    async setAuth(changeAuth) {
+        const res = await loginRequest({});
         this.changeAuth = changeAuth;
+
+        if (res?.message === 'Invalid email or password')
+            this.logout();
+
         this.changeAuth(this.authenticated);
     }
 

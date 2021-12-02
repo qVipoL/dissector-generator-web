@@ -12,23 +12,13 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import DissectorMenu from './DissectorMenu';
 import Auth from '../util/Auth';
+import Requests from '../util/Requests';
 
 import emptyList from '../assets/empty-list.png';
 
+const { requestDelete } = Requests;
+
 const theme = createTheme();
-
-async function requestDelete(id) {
-    const response = await fetch(`http://localhost/dissector-generator-api/api/routes/dissectors/delete.php?id=${id}`, {
-        method: 'DELETE',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer'
-    });
-
-    return await response.json();
-}
 
 export default function BasicTable() {
     const [data, setData] = useState({
