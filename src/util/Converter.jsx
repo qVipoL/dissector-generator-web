@@ -49,7 +49,7 @@ dissectorTable["${this.data.connectionType}", "${this.data.port}"] = ${this.data
         return `
     switch(${field.conditionField}) {
         ${field.cases.map((caseField) => `
-        ${caseField.case}:
+        case ${caseField.case}:
             ${caseField.fieldType} ${caseField.fieldName};
 `).join(``)}
     };
