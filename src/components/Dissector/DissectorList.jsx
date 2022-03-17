@@ -11,10 +11,10 @@ import Paper from '@mui/material/Paper';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import DissectorMenu from './DissectorMenu';
-import Auth from '../util/Auth';
-import Requests from '../util/Requests';
+import Auth from '../../util/Auth';
+import Requests from '../../util/Requests';
 
-import emptyList from '../assets/empty-list.png';
+import emptyList from '../../assets/empty-list.png';
 
 const { requestDelete } = Requests;
 

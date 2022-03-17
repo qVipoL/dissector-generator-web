@@ -1,5 +1,5 @@
 import React from 'react';
-import DissectorList from '../../components/DissectorList';
+import DissectorList from '../../components/Dissector/DissectorList';
 
 export default function DissectorHome() {
     return (

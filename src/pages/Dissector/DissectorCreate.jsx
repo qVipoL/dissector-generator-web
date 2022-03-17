@@ -1,5 +1,5 @@
 import React from 'react';
-import DissectorForm from '../../components/DissectorForm';
+import DissectorForm from '../../components/Dissector/DissectorForm';
 
 export default function DissectorCreate() {
     return (

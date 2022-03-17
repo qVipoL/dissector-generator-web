@@ -5,7 +5,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-import Auth from '../util/Auth';
+import Auth from '../../util/Auth';
 
 export default function DissectorMenu(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);

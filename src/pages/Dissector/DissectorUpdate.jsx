@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Auth from '../../util/Auth';
-import DissectorForm from '../../components/DissectorForm';
+import DissectorForm from '../../components/Dissector/DissectorForm';
 
 export default function DissectorCreate() {
     const { id } = useParams();

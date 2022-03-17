@@ -17,12 +17,12 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import Tooltip from '@mui/material/Tooltip';
 import { useNavigate } from 'react-router-dom';
-import Converter from '../util/Converter';
+import Converter from '../../util/Converter';
 import StructMenu from './StructMenu';
 import DissectorModal from './DissectorModal';
-import Auth from '../util/Auth';
-import HelperFunctions from '../util/HelperFunctions';
-import Requests from '../util/Requests';
+import Auth from '../../util/Auth';
+import HelperFunctions from '../../util/HelperFunctions';
+import Requests from '../../util/Requests';
 
 const { requestConversion, requestCreate } = Requests;
 const { trimAndRemoveSpaces } = HelperFunctions;
@@ -66,6 +66,11 @@ export default function DissectorForm(props) {
             structs[structIdx].fields[fieldIdx][prop] = event.target.value;
         else
             structs[structIdx].fields[fieldIdx].cases[caseIdx][prop] = event.target.value;
+
+        console.log({
+            ...values,
+            structs
+        })
 
         setValues({
             ...values,
@@ -175,7 +180,7 @@ export default function DissectorForm(props) {
                     fields: struct.fields?.map((field) => {
                         return {
                             ...field,
-                            fieldName: trimAndRemoveSpaces(field.fieldName),
+                            ...(field.cases && field.cases.length > 0 ? { conditionField: trimAndRemoveSpaces(field.conditionField) } : { fieldName: trimAndRemoveSpaces(field.fieldName) }),
                             ...(field.fieldType ? { fieldType: trimAndRemoveSpaces(field.fieldType) } : null),
                             ...(field.bitMask ? { bitMask: trimAndRemoveSpaces(field.bitMask) } : null),
                             ...(field.cases && field.cases.length > 0 ? {

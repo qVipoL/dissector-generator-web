@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import DissectorHome from '../pages/Dissector/DissectorHome';
 import DissectorCreate from '../pages/Dissector/DissectorCreate';
 import DissectorUpdate from '../pages/Dissector/DissectorUpdate';
-import NavBar from '../components/NavBar';
+import NavBar from '../components/Nav/NavBar';
 
 export default function AuthNavigator() {
     return (

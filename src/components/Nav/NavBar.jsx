@@ -7,8 +7,8 @@ import IconButton from '@mui/material/IconButton';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AddIcon from '@mui/icons-material/Add';
 
-import Auth from '../util/Auth';
-import Requests from '../util/Requests';
+import Auth from '../../util/Auth';
+import Requests from '../../util/Requests';
 
 const { logoutRequest } = Requests;
 
